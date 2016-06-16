@@ -74,8 +74,16 @@ public class CyActivator extends AbstractCyActivator {
     public static CyNetworkManager getCyNetworkManager() {
         return networkManager; 
     }
-            
-    public static CySwingAppAdapter getCySwingAppAdapter() {
-        return adapter;
+    
+    public static CyNetworkViewFactory getCyNetworkViewFactory() {
+        return networkViewFactory;
+    }
+    
+    public static CyNetworkViewManager getCyNetworkViewManager() {
+        return networkViewManager;
+    }
+    
+    public static CyAppAdapter getCyAppAdapter() {
+        return appAdapter;
     }
 }
