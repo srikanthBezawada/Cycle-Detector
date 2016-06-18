@@ -46,11 +46,10 @@ public class CycleLogic extends Thread{
         CyTable nTable = currentnetwork.getDefaultNodeTable();
         CyTable eTable = currentnetwork.getDefaultEdgeTable();
         unselectAll(nTable, eTable, nodeList, edgeList);
-        UndirectedGraph<CyNode, CyEdge> ug;
-        DirectedGraph<CyNode, CyEdge> dg;
         List<List<CyNode>> cycleList = null;
+        
         if(isUnDirected) {
-            ug = new SimpleGraph<CyNode, CyEdge>(CyEdge.class);
+            UndirectedGraph<CyNode, CyEdge> ug = new SimpleGraph<CyNode, CyEdge>(CyEdge.class);
             for(CyNode n : nodeList){
                 ug.addVertex(n);
             }
@@ -67,7 +66,7 @@ public class CycleLogic extends Thread{
                 return;
             }
         } else {
-            dg = new DefaultDirectedGraph<CyNode, CyEdge>(CyEdge.class);
+            DirectedGraph<CyNode, CyEdge> dg = new DefaultDirectedGraph<CyNode, CyEdge>(CyEdge.class);
             for(CyNode n : nodeList){
                 dg.addVertex(n);
             }
