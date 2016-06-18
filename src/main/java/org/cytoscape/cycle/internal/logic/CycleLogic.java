@@ -18,6 +18,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.cycle.PatonCycleBase;
 import org.jgrapht.alg.cycle.SzwarcfiterLauerSimpleCycles;
+import org.jgrapht.alg.cycle.TarjanSimpleCycles;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -61,14 +62,11 @@ public class CycleLogic extends Thread{
             }
             PatonCycleBase cycleFinder = new PatonCycleBase(ug);
             cycleList = cycleFinder.findCycleBase();
+            if(cycleList.isEmpty()) {
+                noCyclesFound();
+                return;
+            }
         } else {
-            JOptionPane.showMessageDialog(null, "Try Undirected networks for now ", "Stay tuned for 1.1 release ", JOptionPane.INFORMATION_MESSAGE);
-            long endTime = System.currentTimeMillis();
-            long difference = endTime - startTime;
-            System.out.println("Execution time for this cycle detection app : " + difference +" milli seconds");
-            gui.endComputation();
-            return;
-            /*
             dg = new DefaultDirectedGraph<CyNode, CyEdge>(CyEdge.class);
             for(CyNode n : nodeList){
                 dg.addVertex(n);
@@ -79,24 +77,18 @@ public class CycleLogic extends Thread{
                 }
                 dg.addEdge(e.getSource(), e.getTarget(), e);
             }
-            //TarjanSimpleCycles<CyNode, CyEdge> cycleFinder = new TarjanSimpleCycles<CyNode, CyEdge>();
-            //cycleList = cycleFinder.findSimpleCycles();
+            TarjanSimpleCycles<CyNode, CyEdge> cycleFinder = new TarjanSimpleCycles<CyNode, CyEdge>();
+            if(cycleFinder.findSimpleCycles().isEmpty()) {
+                noCyclesFound();
+                return;
+            }
+            cycleList = cycleFinder.findSimpleCycles();
+            /*
+            cycleList = cycleFinder.findSimpleCycles();
             SzwarcfiterLauerSimpleCycles<CyNode, CyEdge> cycleFinder = new SzwarcfiterLauerSimpleCycles<CyNode, CyEdge>();
             cycleList = cycleFinder.findSimpleCycles();
             */
-            
         }
-        
-        if(cycleList.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No Cycles found !", "Try another network ", JOptionPane.INFORMATION_MESSAGE);
-            long endTime = System.currentTimeMillis();
-            long difference = endTime - startTime;
-            System.out.println("Execution time for this cycle detection app : " + difference +" milli seconds");
-            gui.endComputation();
-            return;
-        }
-        
-        
         List<CyNode> requiredNodes = new ArrayList<CyNode>();
         List<CyEdge> requiredEdges = new ArrayList<CyEdge>();
         for(List<CyNode> cycle : cycleList) {
@@ -106,7 +98,6 @@ public class CycleLogic extends Thread{
             select(nTable, eTable, requiredNodes, requiredEdges);
             createSubNetwork(requiredNodes, requiredEdges, count);
         }
-    
     
         long endTime = System.currentTimeMillis();
         long difference = endTime - startTime;
@@ -122,7 +113,6 @@ public class CycleLogic extends Thread{
             if(neightbourNodes.contains(e.getSource()) && neightbourNodes.contains(e.getTarget())) 
                 neighbourEges.add(e);
         }
-        
         return neighbourEges;
     }
     
@@ -144,28 +134,28 @@ public class CycleLogic extends Thread{
                 CyRow row = eTable.getRow(e.getSUID());
                 row.set("selected", false);
             }
-        
         for(CyNode n : nodeList){
             CyRow row = nTable.getRow(n.getSUID());
             row.set("selected", false);
         }
-        
     }
-        
-        
         
         
     public void select(CyTable nTable, CyTable eTable, List<CyNode> nList, List<CyEdge> eList){
         for(CyEdge e : eList){
                 CyRow row = eTable.getRow(e.getSUID());
-                row.set("selected", false);
+                row.set("selected", true);
             }
-        
         for(CyNode n : nList){
             CyRow row = nTable.getRow(n.getSUID());
-            row.set("selected", false);
+            row.set("selected", true);
         }
+    }
     
+    public void noCyclesFound() {
+        JOptionPane.showMessageDialog(null, "No Cycles found !", "Try another network ", JOptionPane.INFORMATION_MESSAGE);
+        gui.endComputation();
+        return;
     }
     
 }
